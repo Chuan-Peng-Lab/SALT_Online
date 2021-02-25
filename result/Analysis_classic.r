@@ -110,7 +110,6 @@ resultRT <-  aov(rt ~ valence * match + Error(subj_idx/(valence + match)), df.M.
 # reshape2::dcast(df.M.Dprime, subj_idx ~  valence) # 长转宽
 
 df.M_wide <- merge(
-      
       reshape2::dcast(df.M.RT, subj_idx ~  match + valence, value.var = "rt"), 
       reshape2::dcast(df.M.Dprime, subj_idx ~  valence, value.var = "dPrime"), 
       by.x = "subj_idx"
@@ -119,6 +118,7 @@ df.M_wide <- merge(
                     d_good = good,
                     d_ordinary = ordinary)
 
+write.csv(df.M_wide, file = 'df.M.sum_jasp.csv', row.names = F)
 
 # 贝叶斯的分析
 library(BayesFactor)

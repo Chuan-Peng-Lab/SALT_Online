@@ -3,3 +3,4 @@
 # Data
 data/
 *data/
+*.Rhistory
