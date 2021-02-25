@@ -1,9 +1,6 @@
 if (exists("df.M")) rm("df.M")
 library(tidyverse)
 
-# 注释
-# Name优化
-
 # 读取数据文件列表
 file <- list.files("data")
 
@@ -43,7 +40,7 @@ for (f in file) {
       response = ifelse(key_press == 78, "n", ifelse(key_press == 77, "m", "NA")),
       acc = ifelse(as.logical(acc) == TRUE, 1, ifelse(as.logical(acc) == FALSE, 0, "NA")),
       match = ifelse(correctRp == match, "match", "mismatch"),
-      Vali = ifelse(shape_en == "square", tmp3$label_en[tmp3$shape_en == "square"],
+      valence = ifelse(shape_en == "square", tmp3$label_en[tmp3$shape_en == "square"],
                     ifelse(shape_en == "circular", tmp3$label_en[tmp3$shape_en == "circular"], 
                            ifelse(shape_en == "triangle", tmp3$label_en[tmp3$shape_en == "triangle"], "NA")
                     ))
@@ -62,7 +59,7 @@ for (f in file) {
         "trial_type_num", # 试次循环，1为第一次循环
         "label_en", # 呈现的文字
         "shape_en", # 呈现的图形
-        "Vali", # 匹配的情况下，图形对应的文字
+        "valence", # 匹配的情况下，图形对应的文字
         "match", # 匹配与否
         "correctRp", # 正确反应按键，非被试反应按键
         "response", # 被试所呈现的反应
@@ -100,19 +97,53 @@ df.M.Dprime <- df.M %>%
     fa = ifelse(acc == 0 & match != "match", 1, 0)
   ) %>% 
   dplyr::group_by(
-    subjectIndex, Vali
+    subjectIndex, valence
   ) %>% 
   dplyr::summarise(
+    rt = mean(as.integer(rt), na.rm = T),
     hit = sum(hit),
     fa = sum(fa),
     miss = sum(miss),
     cr = sum(cr)
   ) %>% 
   dplyr::mutate(
-    hitP = ifelse(hit / (hit + miss) < 1 & hit / (hit + miss) > 0, hit / (hit + miss), 1 - 1/(2 * (hit + miss))),
-    faP = ifelse(fa / (fa + cr) > 0 & fa / (fa + cr) < 1, fa / (fa + cr), 1/(2 * (fa + cr))),
+    hitP = ifelse(hit / (hit + miss) < 1 & hit / (hit + miss) > 0, 
+                  hit / (hit + miss), 
+                  1 - 1/(2 * (hit + miss))),
+    faP = ifelse(fa / (fa + cr) > 0 & fa / (fa + cr) < 1, 
+                 fa / (fa + cr), 
+                 1/(2 * (fa + cr))),
     dPrime = qnorm(hitP) - qnorm(faP)
   )
+
+# 计算分组平均RT时间
+df.M.RT <- df.M %>% 
+  dplyr::group_by(
+    subjectIndex, valence, match
+  ) %>% 
+  dplyr::summarise(
+    rt = mean(as.integer(rt), na.rm = T)
+  )
+
+# 开始传统的重复测量方差分析
+resultDprime <-  aov(dPrime ~ valence + Error(subjectIndex/(valence)), df.M.Dprime) %>% 
+  summary()
+resultRT <-  aov(rt ~ valence * match + Error(subjectIndex/(valence + match)), df.M.RT) %>% 
+  summary()
+
+# 贝叶斯的分析
+library(BayesFactor)
+
+# RT 反应时
+df.M.RT.By <- as.data.frame(df.M.RT)
+
+df.M.RT.By$subjectIndex <- factor(df.M.RT.Ba$subjectIndex)
+df.M.RT.By$valence <- factor(df.M.RT.Ba$valence)
+df.M.RT.By$match <- factor(df.M.RT.Ba$match)
+
+bf = anovaBF(rt ~ valence * match + subjectIndex, data = df.M.RT.By, 
+             whichRandom="subjectIndex")
+
 
 
 
