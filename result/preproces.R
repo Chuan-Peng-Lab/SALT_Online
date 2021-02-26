@@ -6,16 +6,26 @@ library(tidyverse)
 # 读取数据文件列表
 file <- list.files("data")
 
+# remove two raw data that may cause error, the modified data files of these two participants are in the file list.
+"%w/o%" <- function(x, y) x[!x %in% y] #--  x without y
+file <- file %w/o% c("v010025.csv", "v010029.csv")
+
 if (exists("df.M")) rm("df.M")  # delet df.m before running the for loop to avoid error
 for (f in file) {
   # 读取单个数据文件，并赋值给va
   
-  va <- read.csv(paste("data/", f, sep=""), header=TRUE, sep=",", stringsAsFactors = F)
+  va <- read.csv(paste("data/", f, sep=""), header=TRUE, sep=",", stringsAsFactors = F, encoding = "UTF-8")
   # 读取被试基本信息
-  id <- paste("v01", jsonlite::fromJSON(va$responses[2])$Q1, sep="") # 被试ID
+  id <- unlist(strsplit(f, '[.]'))[1]  # get the participant's id from file name
+  # id <- paste("v01", jsonlite::fromJSON(va$responses[2])$Q1, sep="") # 被试ID
   sex = va$response[5]   # 被试性别
   birth = jsonlite::fromJSON(va$responses[6])$Q0  # 被试出生年份
-  edu = jsonlite::fromJSON(va$responses[7])$Q0    # 被试学历
+  if (id == 'v010019' | id == 'v010025' | id == 'v010029'){
+    edu <- NA
+  } else {
+    edu = jsonlite::fromJSON(va$responses[7])$Q0    # 被试学历
+  }
+  
   match = va$sti_match[1]        # 被试匹配按键
   mismatch = va$sti_mismatch[1]  # 被试不匹配按键
   stiType = va$sti_group[1]      # 被试刺激类型，即所分配到的组别

@@ -2,13 +2,14 @@ library(tidyverse)
 
 rm(list = ls()) 
 
-df.M <- read.csv('df_pilot_online_SALT_open.csv')
+df.OL <- read.csv('df_pilot_online_SALT_open.csv')
+
 # 将需要的数组转换为 integer
-df.M$rt[df.M$rt != "null"] <- as.integer(df.M$rt[df.M$rt != "null"])
-df.M$acc <- as.integer(df.M$acc)
+df.OL$rt[df.OL$rt != "null"] <- as.integer(df.OL$rt[df.OL$rt != "null"])
+df.OL$acc <- as.integer(df.OL$acc)
 
 # 计算基本信息
-df.M.basic <- df.M %>% 
+df.OL.basic <- df.OL %>% 
       dplyr::select(subj_idx, sex, age, edu) %>% 
       dplyr::distinct(subj_idx, sex, age) %>% 
       dplyr::summarise(subj_N = length(subj_idx),
@@ -19,13 +20,13 @@ df.M.basic <- df.M %>%
       )
 
 # check trials number, doubt check the data: v010001's trials number is not correct
-df.M.trials <- df.M %>%
+df.OL.trials <- df.OL %>%
       dplyr::filter(block_type == "test") %>%
       dplyr::group_by(subj_idx, match, valence) %>%
       dplyr::summarise(n = n())
       
 # Exclude participants if necessary
-subj_excld_list <- df.M %>% 
+subj_excld_list <- df.OL %>% 
       dplyr::filter(block_type == "test") %>%
       dplyr::group_by(subj_idx) %>%
       dplyr::summarise(meanACC = mean(acc)) %>%
@@ -36,7 +37,7 @@ subj_excld_list <- df.M %>%
 
 # invalide trials
 
-num_invalid_trial <- df.M %>% 
+num_invalid_trial <- df.OL %>% 
       dplyr::filter(block_type == "test") %>%                   # exclude practice trials
       dplyr::filter(!(subj_idx %in% subj_excld_list)) %>%       # exclude invalid participant
       dplyr::filter(rt <= 200) %>%
@@ -44,7 +45,7 @@ num_invalid_trial <- df.M %>%
       dplyr::pull(n)
 
 # ratio of invalid trials
-num_invalid_trial_ratio <- df.M %>% 
+num_invalid_trial_ratio <- df.OL %>% 
       dplyr::filter(block_type == "test") %>%                   # exclude practice trials
       dplyr::filter(!(subj_idx %in% subj_excld_list)) %>%   # exclude invalid participant
       dplyr::summarise(n = n()) %>%
@@ -52,7 +53,7 @@ num_invalid_trial_ratio <- df.M %>%
 
 # 计算Dprime
 
-df.M.Dprime <- df.M %>% 
+df.OL.Dprime <- df.OL %>% 
       dplyr::filter(block_type == "test") %>%                   # exclude practice trials
       dplyr::filter(!(subj_idx %in% subj_excld_list)) %>%       # exclude invalid participant
       dplyr::filter(rt >= 200) %>%                              # exclude very short response
@@ -84,7 +85,7 @@ df.M.Dprime <- df.M %>%
       )
 
 # 计算分组平均RT时间
-df.M.RT <- df.M %>% 
+df.OL.RT <- df.OL %>% 
       dplyr::filter(block_type == "test") %>%                   # exclude practice trials
       dplyr::filter(!(subj_idx %in% subj_excld_list)) %>%       # exclude invalid participant
       dplyr::filter(rt >= 200) %>%                              # exclude very short response
@@ -97,62 +98,62 @@ df.M.RT <- df.M %>%
       )
 
 # 开始传统的重复测量方差分析
-resultDprime <-  aov(dPrime ~ valence + Error(subj_idx/(valence)), df.M.Dprime) %>% 
+resultDprime <-  aov(dPrime ~ valence + Error(subj_idx/(valence)), df.OL.Dprime) %>% 
       summary()
 
-resultRT <-  aov(rt ~ valence * match + Error(subj_idx/(valence + match)), df.M.RT) %>% 
+resultRT <-  aov(rt ~ valence * match + Error(subj_idx/(valence + match)), df.OL.RT) %>% 
       summary()
 
 # 长 宽 转换，以JASP分析
 
-# reshape2::melt(df.M.RT, id.vars = c("subj_idx")) # 宽转长
+# reshape2::melt(df.OL.RT, id.vars = c("subj_idx")) # 宽转长
 
-# reshape2::dcast(df.M.RT, subj_idx ~  match + valence) # 长转宽
-# reshape2::dcast(df.M.Dprime, subj_idx ~  valence) # 长转宽
+# reshape2::dcast(df.OL.RT, subj_idx ~  match + valence) # 长转宽
+# reshape2::dcast(df.OL.Dprime, subj_idx ~  valence) # 长转宽
 
-df.M_wide <- merge(
-      reshape2::dcast(df.M.RT, subj_idx ~  match + valence, value.var = "rt"), 
-      reshape2::dcast(df.M.Dprime, subj_idx ~  valence, value.var = "dPrime"), 
+df.OL_wide <- merge(
+      reshape2::dcast(df.OL.RT, subj_idx ~  match + valence, value.var = "rt"), 
+      reshape2::dcast(df.OL.Dprime, subj_idx ~  valence, value.var = "dPrime"), 
       by.x = "subj_idx"
       ) %>%
       dplyr::rename(d_bad = bad,
                     d_good = good,
                     d_ordinary = ordinary)
 
-write.csv(df.M_wide, file = 'df.M.sum_jasp.csv', row.names = F)
+write.csv(df.OL_wide, file = 'df.OL.sum_jasp.csv', row.names = F)
 
 # 贝叶斯的分析
 library(BayesFactor)
 
 ## RT 反应时
-df.M.RT.By <- as.data.frame(df.M.RT)
+df.OL.RT.By <- as.data.frame(df.OL.RT)
 
-df.M.RT.By$subj_idx <- factor(df.M.RT.By$subj_idx)
-df.M.RT.By$valence <- factor(df.M.RT.By$valence)
-df.M.RT.By$match <- factor(df.M.RT.By$match)
+df.OL.RT.By$subj_idx <- factor(df.OL.RT.By$subj_idx)
+df.OL.RT.By$valence <- factor(df.OL.RT.By$valence)
+df.OL.RT.By$match <- factor(df.OL.RT.By$match)
 
-df.M.RT.ByResult = anovaBF(rt ~ valence * match + subj_idx, data = df.M.RT.By, 
+df.OL.RT.ByResult = anovaBF(rt ~ valence * match + subj_idx, data = df.OL.RT.By, 
                            whichRandom="subj_idx")
 
 ## Dprime
-df.M.Dprime.By <- as.data.frame(df.M.Dprime)
+df.OL.Dprime.By <- as.data.frame(df.OL.Dprime)
 
-df.M.Dprime.By$subj_idx <- factor(df.M.Dprime.By$subj_idx)
-df.M.Dprime.By$valence <- factor(df.M.Dprime.By$valence)
+df.OL.Dprime.By$subj_idx <- factor(df.OL.Dprime.By$subj_idx)
+df.OL.Dprime.By$valence <- factor(df.OL.Dprime.By$valence)
 
-df.M.Dprime.ByResult = anovaBF(rt ~ valence + subj_idx, data = df.M.Dprime.By, 
+df.OL.Dprime.ByResult = anovaBF(rt ~ valence + subj_idx, data = df.OL.Dprime.By, 
                                whichRandom="subj_idx")
 
 
 # plot the data
-df.rt <- df.M.RT %>%       
+df.rt <- df.OL.RT %>%       
       dplyr::rename(Subject = subj_idx,
                     Matchness = match,
                     RT_m = rt, 
                     Valence = valence) %>%
       dplyr::mutate(Valence = ifelse(Valence == "good",  'Good', 
                                      ifelse(Valence == 'bad', 'Bad', 'Neutral')))
-df.d <- df.M.Dprime %>%
+df.d <- df.OL.Dprime %>%
       dplyr::rename(Subject = subj_idx,
                     Valence = valence,
                     dprime = dPrime) %>%
