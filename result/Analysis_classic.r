@@ -3,6 +3,9 @@ library(tidyverse)
 rm(list = ls()) 
 
 df.M <- read.csv('df_pilot_online_SALT_open.csv')
+# 将需要的数组转换为 integer
+df.M$rt[df.M$rt != "null"] <- as.integer(df.M$rt[df.M$rt != "null"])
+df.M$acc <- as.integer(df.M$acc)
 
 # 计算基本信息
 df.M.basic <- df.M %>% 
@@ -53,7 +56,6 @@ df.M.Dprime <- df.M %>%
       dplyr::filter(block_type == "test") %>%                   # exclude practice trials
       dplyr::filter(!(subj_idx %in% subj_excld_list)) %>%       # exclude invalid participant
       dplyr::filter(rt >= 200) %>%                              # exclude very short response
-      dplyr::filter(subj_idx != 'v010001') %>%                  # temperarily exclude v010001
       dplyr::select(subj_idx, match, valence, acc) %>%
       dplyr::mutate(
             hit = ifelse(acc == 1 & match == "match", 1, 0),    # hit
@@ -87,7 +89,6 @@ df.M.RT <- df.M %>%
       dplyr::filter(!(subj_idx %in% subj_excld_list)) %>%       # exclude invalid participant
       dplyr::filter(rt >= 200) %>%                              # exclude very short response
       dplyr::filter(acc == 1) %>%
-      dplyr::filter(subj_idx != 'v010001') %>%                  # temperarily exclude v010001
       dplyr::group_by(
             subj_idx, valence, match
       ) %>% 
@@ -143,7 +144,7 @@ df.M.Dprime.ByResult = anovaBF(rt ~ valence + subj_idx, data = df.M.Dprime.By,
                                whichRandom="subj_idx")
 
 
-## plot the data
+# plot the data
 df.rt <- df.M.RT %>%       
       dplyr::rename(Subject = subj_idx,
                     Matchness = match,

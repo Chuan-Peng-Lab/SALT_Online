@@ -1,6 +1,6 @@
 # Mac
 .DS_Store
 # Data
-data/
 *data/
+*data[0-9]/
 *.Rhistory

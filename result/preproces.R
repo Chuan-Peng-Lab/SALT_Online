@@ -9,6 +9,7 @@ file <- list.files("data")
 if (exists("df.M")) rm("df.M")  # delet df.m before running the for loop to avoid error
 for (f in file) {
   # 读取单个数据文件，并赋值给va
+  
   va <- read.csv(paste("data/", f, sep=""), header=TRUE, sep=",", stringsAsFactors = F)
   # 读取被试基本信息
   id <- paste("v01", jsonlite::fromJSON(va$responses[2])$Q1, sep="") # 被试ID
@@ -18,7 +19,7 @@ for (f in file) {
   match = va$sti_match[1]        # 被试匹配按键
   mismatch = va$sti_mismatch[1]  # 被试不匹配按键
   stiType = va$sti_group[1]      # 被试刺激类型，即所分配到的组别
-  
+
   # 获取匹配状态
   # 如： 圆形——好人、正方形——坏人、三角形——常人
   tmp3 <- va %>%
@@ -100,6 +101,6 @@ df.open <- df.M %>%
     )
   )
   
-# rm(list = ls()[ls() != "df.M"]) # delete unnecessary variables
+rm(list = ls()[-grep("df", ls())]) # delete unnecessary variables
 
 write.csv(df.open, file="df_pilot_online_SALT_open.csv", row.names = F)
