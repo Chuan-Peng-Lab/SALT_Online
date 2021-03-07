@@ -24,4 +24,4 @@ Online experiment:
 
 
 ## Results
-![RT and d prime](./result/pilot_comp.png)
+![RT and d prime](./result/doc/pilot_comp.png)
