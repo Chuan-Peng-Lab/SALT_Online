@@ -863,7 +863,7 @@
         type: "html-keyboard-response",
         stimulus: function () {
             let key = jsPsych.data.get().last(1).values()[0].key_press;
-            let last_trial_accuracy = jsPsych.data.get().last(1).values()[0].correct;
+            let last_trial_accuracy = jsPsych.data.get().last(1).values()[0].Acc;
             // let time = jsPsych.data.get().last(1).values()[0].rt;
             if (last_trial_accuracy && key) {
                 return "<span class='add_' style='color: #adff87;'> correct! </span>"
@@ -919,7 +919,7 @@
             let t = jsPsych.timelineVariable("stimulus", true);
             let w = jsPsych.timelineVariable("item", true);
             let key = jsPsych.timelineVariable("data", true);
-            let ppp = sti[k][sti[k].findIndex(function(a){if(a.stimulus.indexOf("t")!==-1 && a.data.correct_response == answer[0]){return a}})]["item"];
+            let ppp = sti[k][sti[k].findIndex(function(a){if(a.stimulus.indexOf(t)!==-1 && a.data.correct_response == answer[0]){return a}})]["item"];
             return {
                 TimeStamp: Date.now(),
                 Index: info["index"],
@@ -949,7 +949,7 @@
             }
         },
         on_finish: function (data) {
-            data.Acc = data.key === jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
+            data.Acc = data.Correctkey === jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
         },
         trial_duration: 2200,
         background_color: "grey"
@@ -964,7 +964,7 @@
         timeline_variables: test_stimuli,
         randomize_order: true,
         loop_function: function () {
-            let accuracy = jsPsych.data.get().filter({correct: true, test_part: "test" + (frequency)}).count() / jsPsych.data.get().filter({test_part: "test" + (frequency)}).count();
+            let accuracy = jsPsych.data.get().filter({Acc: true, test_part: "test" + (frequency)}).count() / jsPsych.data.get().filter({test_part: "test" + (frequency)}).count();
             console.log(accuracy);
             frequency += 1;
             if (accuracy >= acc && frequency<=1) {
@@ -979,7 +979,7 @@
                             block: 'test_' + aaaaa.toString()
                         });
                         let correct_trials = trials.filter({
-                            correct: true
+                            Acc: true
                         });
                         let accuracy = Math.round(correct_trials.count() / trials.count() * 100);
                         let rt = Math.round(correct_trials.select('rt').mean());
@@ -1019,7 +1019,7 @@
                 test_part: 'test' + frequency
             });
             let correct_trials = trials.filter({
-                correct: true
+                Acc: true
             });
             let accuracy = Math.round(correct_trials.count() / trials.count() * 100);
             let rt = Math.round(correct_trials.select('rt').mean());
