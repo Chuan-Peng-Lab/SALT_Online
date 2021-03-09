@@ -1,0 +1,6 @@
+[submodule "Procedure/assets/mupsy"]
+	path = Procedure/assets/mupsy
+	url = https://github.com/mupsycho/jsPsych.git
+[submodule "Procedure/assets/jspsych"]
+	path = Procedure/assets/jspsych
+	url = https://github.com/jspsych/jsPsych.git

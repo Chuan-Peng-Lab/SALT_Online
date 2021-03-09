@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="../assets/js/jquery.js"></script>
-    <script src='../assets/jsPsych/jspsych.js'></script>
+    <script src='../assets/mupsy/jspsych.js'></script>
     <script src='../assets/jsPsych/plugins/jspsych-html-keyboard-response.js'></script>
     <script src='../assets/jsPsych/plugins/jspsych-survey-text.js'></script>
     <script src='../assets/jsPsych/plugins/jspsych-html-button-response.js'></script>
@@ -742,10 +742,8 @@
         html:"<p><input name='Q0' type='text' value='" + exper_number + "' disabled='disabled' /></p><p><input name='Q1' type='number' value='' required/></p>",
         button_label:"继续",
         on_finish: function addRespFromSurvey(data) {
-            data.response = parseInt(data.button_pressed) + 1;
-            let pp = JSON.parse(data.responses);
-            data.number = exper_number + pp.Q1.padStart(4, "0");
-            info["index"] = exper_number + pp.Q1.padStart(4, "0");
+            data.number = exper_number + data.response.Q1.padStart(4, "0");
+            info["index"] = exper_number + data.response.Q1.padStart(4, "0");
         },
         on_load: function () { 
             let bb = document.getElementById("jspsych-content");
@@ -767,8 +765,7 @@
         html:"<p><input name='Q0' type='number' value=' ' required/></p>",
         button_label:"继续",
         on_finish: function addRespFromSurvey(data) {
-            data.response = parseInt(data.button_pressed) + 1,
-            info["NumbeOfExperiments"] = JSON.parse(data.responses)["Q0"];
+            info["NumbeOfExperiments"] = data.response.Q0;
         }
 
     };
@@ -781,8 +778,7 @@
         html:"<p><input name='Q0' type='text' value='' required/></p>",
         button_label:"继续",
         on_finish: function addRespFromSurvey(data) {
-            data.response = parseInt(data.button_pressed) + 1;
-            info["Name"] = JSON.parse(data.responses)["Q0"];
+            info["Name"] = data.response.Q0;
         }
     };
     let sex = {
@@ -807,7 +803,7 @@
     oninput="if(value.length>4) value=value.slice(0,4)" required /></p>`,
         button_label: '继续',
         on_finish: function addRespFromSurvey(data) {
-            info["BirthYear"] = JSON.parse(data.responses)["Q0"];
+            info["BirthYear"] = data.response.Q0;
         }
     };
     let education = {
@@ -829,12 +825,11 @@
        </select></p>`,
         button_label: '继续',
         on_finish: function addRespFromSurvey(data) {
-            data.response = parseInt(data.button_pressed) + 1;
             let bodyNode = document.getElementsByTagName("body");
             for (let i = 0; i < bodyNode.length; i++) {
                 bodyNode[i].style.cursor = "none";
             }
-            info["Education"] = JSON.parse(data.responses)["Q0"];
+            info["Education"] = data.response.Q0;
         }
     };
     timeline.push(experinumber, number_of_experiment, person_name, sex, birth, education, {
@@ -952,7 +947,7 @@
             }
         },
         on_finish: function (data) {
-            data.Acc = data.Correctkey === jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
+            data.Acc = data.Correctkey === data.key_press;
         },
         trial_duration: 2200,
         background_color: "grey"
@@ -1080,6 +1075,10 @@
                 "<p style = 'color:white; font-size : 20px'>如果您对实验结果感兴趣，可以发邮件与我联系。</p >" +
                 "<p style = 'color:white; font-size : 20px'>郑元瑞（Email: aaronzheng87@gmail.com） </p ></div>";
             jsPsych.data.get().filter({save: true}).localSave('csv', info["index"] + '.csv');
+            jsPsych.data.get().filter({save: true}).filterColumns(["TimeStamp","Index","NumberOfExper",
+                "Name","Sex","BirthYear","Education","StiGroup","MatchKey","MisMatchKey","ShowShape","ShowShapeEn",
+                "ShowLabel","ShowLabelEn","MatchLableEn","Correctkey","Match","save","test_part",
+                "trial","block","block_id","trial_id","block_type","trial_type_num"]).localSave('csv', "ColumnsSort" + info["index"] + '.csv');
             document.exitFullscreen();
             let bodyNode = document.getElementsByTagName("body");
             for (let i = 0; i < bodyNode.length; i++) {
