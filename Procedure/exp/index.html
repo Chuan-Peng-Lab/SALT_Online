@@ -1077,8 +1077,8 @@
             jsPsych.data.get().filter({save: true}).localSave('csv', info["index"] + '.csv');
             jsPsych.data.get().filter({save: true}).filterColumns(["TimeStamp","Index","NumberOfExper",
                 "Name","Sex","BirthYear","Education","StiGroup","MatchKey","MisMatchKey","ShowShape","ShowShapeEn",
-                "ShowLabel","ShowLabelEn","MatchLableEn","Correctkey","Match","save","test_part",
-                "trial","block","block_id","trial_id","block_type","trial_type_num"]).localSave('csv', "ColumnsSort" + info["index"] + '.csv');
+                "ShowLabel","ShowLabelEn","MatchLableEn","Correctkey","Match","test_part",
+                "trial","block","block_id","trial_id","block_type","trial_type_num", "key_press", "rt"]).localSave('csv', "ColumnsSort" + info["index"] + '.csv');
             document.exitFullscreen();
             let bodyNode = document.getElementsByTagName("body");
             for (let i = 0; i < bodyNode.length; i++) {
