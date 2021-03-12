@@ -1075,7 +1075,7 @@
                 "<p style = 'color:white; font-size : 20px'>如果您对实验结果感兴趣，可以发邮件与我联系。</p >" +
                 "<p style = 'color:white; font-size : 20px'>郑元瑞（Email: aaronzheng87@gmail.com） </p ></div>";
             jsPsych.data.get().filter({save: true}).localSave('csv', info["index"] + '.csv');
-            jsPsych.data.get().filter({save: true}).filterColumns(["rt", "TimeStamp","Subject","NumberOfExper",
+            jsPsych.data.get().filter({save: true}).filterColumns(["rt", "accuracy", "TimeStamp","Subject","NumberOfExper",
                 "Name","Sex","BirthYear","Education","StiGroup","MatchKey","MisMatchKey","Shape","ShapeName",
                 "Label","LabelName","ShapeMeaning","Correctkey","Match","test_part",
                 "trial","block","block_id","trial_id","block_type","trial_type_num", "key_press"]).localSave('csv', "ColumnsSort" + info["index"] + '.csv');
