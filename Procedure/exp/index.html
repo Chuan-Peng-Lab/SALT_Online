@@ -70,7 +70,7 @@
     let size_proportion = (window.screen.height / 900) - 0.1;
     // 0.1 消除 滚动框
     let debug_round = 6;
-    let acc = 0.6;// 正确率要求 60% 进入正式实验
+    let acc = 0.4;// 正确率要求 60% 进入正式实验
     let exper_number = "v01"; // 实验编号，v01
 
     let img = ["img/C.bmp", "img/S.bmp", "img/T.bmp"]; // 图片刺激集合
@@ -861,7 +861,7 @@
         type: "html-keyboard-response",
         stimulus: function () {
             let key = jsPsych.data.get().last(1).values()[0].key_press;
-            let last_trial_accuracy = jsPsych.data.get().last(1).values()[0].Acc;
+            let last_trial_accuracy = jsPsych.data.get().last(1).values()[0].accuracy;
             // let time = jsPsych.data.get().last(1).values()[0].rt;
             if (last_trial_accuracy && key) {
                 return "<span class='add_' style='color: #adff87;'> correct! </span>"
@@ -920,8 +920,8 @@
             let ppp = sti[k][sti[k].findIndex(function(a){if(a.stimulus.indexOf(t)!==-1 && a.data.correct_response == answer[0]){return a}})]["item"];
             return {
                 TimeStamp: Date.now(),
-                Index: info["index"],
-                NumberOfExper: info["NumberOfExperiment"],
+                Subject: info["index"],
+                NumberOfExper: info["NumbeOfExperiments"],
                 Name: info["Name"],
                 Sex: info["Sex"],
                 BirthYear: info["BirthYear"],
@@ -929,11 +929,11 @@
                 StiGroup: info["sti_group"],
                 MatchKey: info["match_key"],
                 MisMatchKey: info["mismatch_key"],
-                ShowShape: t,//刺激类型
-                ShowShapeEn: (t.indexOf("C")!==-1 ? "circular" : (t.indexOf("S")!==-1 ? "square" : "triangle")),
-                ShowLabel: w,
-                ShowLabelEn: (w === "好人") ? "good" : ((w === "坏人") ? "bad" : "ordinary"),
-                MatchLableEn: (ppp === "好人") ? "good" : ((ppp === "坏人") ? "bad" : "ordinary"),
+                Shape: t,//刺激类型
+                ShapeName: (t.indexOf("C")!==-1 ? "circular" : (t.indexOf("S")!==-1 ? "square" : "triangle")),
+                Label: w,
+                LabelName: (w === "好人") ? "good" : ((w === "坏人") ? "bad" : "ordinary"),
+                ShapeMeaning: (ppp === "好人") ? "good" : ((ppp === "坏人") ? "bad" : "ordinary"),
                 Correctkey: key.correct_response,
                 Match: w === ppp ? "Match" : "Mismatch",
                 save: true, // 需要保存的筛选数据, 并以此为分界线，上面是对于实验刺激信息的保存，下面是对于实验块信息的保存
@@ -947,7 +947,7 @@
             }
         },
         on_finish: function (data) {
-            data.Acc = data.Correctkey === data.key_press;
+            data.accuracy = data.Correctkey === data.key_press;
         },
         trial_duration: 2200,
         background_color: "grey"
@@ -962,7 +962,7 @@
         timeline_variables: test_stimuli,
         randomize_order: true,
         loop_function: function () {
-            let accuracy = jsPsych.data.get().filter({Acc: true, test_part: "test" + (frequency)}).count() / jsPsych.data.get().filter({test_part: "test" + (frequency)}).count();
+            let accuracy = jsPsych.data.get().filter({accuracy: true, test_part: "test" + (frequency)}).count() / jsPsych.data.get().filter({test_part: "test" + (frequency)}).count();
             console.log(accuracy);
             frequency += 1;
             if (accuracy >= acc && frequency<=1) {
@@ -977,7 +977,7 @@
                             block: 'test_' + aaaaa.toString()
                         });
                         let correct_trials = trials.filter({
-                            Acc: true
+                            accuracy: true
                         });
                         let accuracy = Math.round(correct_trials.count() / trials.count() * 100);
                         let rt = Math.round(correct_trials.select('rt').mean());
@@ -1017,7 +1017,7 @@
                 test_part: 'test' + frequency
             });
             let correct_trials = trials.filter({
-                Acc: true
+                accuracy: true
             });
             let accuracy = Math.round(correct_trials.count() / trials.count() * 100);
             let rt = Math.round(correct_trials.select('rt').mean());
@@ -1075,17 +1075,17 @@
                 "<p style = 'color:white; font-size : 20px'>如果您对实验结果感兴趣，可以发邮件与我联系。</p >" +
                 "<p style = 'color:white; font-size : 20px'>郑元瑞（Email: aaronzheng87@gmail.com） </p ></div>";
             jsPsych.data.get().filter({save: true}).localSave('csv', info["index"] + '.csv');
-            jsPsych.data.get().filter({save: true}).filterColumns(["TimeStamp","Index","NumberOfExper",
-                "Name","Sex","BirthYear","Education","StiGroup","MatchKey","MisMatchKey","ShowShape","ShowShapeEn",
-                "ShowLabel","ShowLabelEn","MatchLableEn","Correctkey","Match","test_part",
-                "trial","block","block_id","trial_id","block_type","trial_type_num", "key_press", "rt"]).localSave('csv', "ColumnsSort" + info["index"] + '.csv');
+            jsPsych.data.get().filter({save: true}).filterColumns(["rt", "TimeStamp","Subject","NumberOfExper",
+                "Name","Sex","BirthYear","Education","StiGroup","MatchKey","MisMatchKey","Shape","ShapeName",
+                "Label","LabelName","ShapeMeaning","Correctkey","Match","test_part",
+                "trial","block","block_id","trial_id","block_type","trial_type_num", "key_press"]).localSave('csv', "ColumnsSort" + info["index"] + '.csv');
             document.exitFullscreen();
             let bodyNode = document.getElementsByTagName("body");
             for (let i = 0; i < bodyNode.length; i++) {
                 bodyNode[i].style.cursor = "default";
                 setTimeout(function(){
                     window.close();
-                },5000)
+                },10000)
 
             }
         }

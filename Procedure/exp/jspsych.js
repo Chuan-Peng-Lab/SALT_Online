@@ -1823,6 +1823,7 @@ jsPsych.data = (function() {
 
     display_element.insertAdjacentHTML('beforeend','<a id="jspsych-download-as-text-link" style="display:none;" download="'+filename+'" href="'+blobURL+'">click to download</a>');
     document.getElementById('jspsych-download-as-text-link').click();
+    document.getElementById("jspsych-download-as-text-link").remove()
   }
 
   //
