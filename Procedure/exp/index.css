@@ -1,0 +1,44 @@
+.add_{
+    font-size: 25px;
+}
+
+body {
+    background-color: grey;
+
+}
+.zfx {
+    margin: 0 20px;
+}
+#jspsych-html-keyboard-response-stimulus {
+    width: 600px;
+    /* 中间盒子宽度 */
+    min-height: 500px;
+    /*中间盒子最小高度*/
+    display: flex;
+    /*设置弹性盒布局ee*/
+    flex-direction: column;
+    /*设置弹性盒为纵向的布局*/
+    align-items: center;
+    /*垂直居中*/
+    justify-content: space-around;
+    /*弹性盒对象的 <div> 元素中的各项周围留有空白,并且是均分的,横向的*/
+    position: relative;
+    /*绝对定位 父元素相对定位*/
+}
+#aaa {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 30px !important;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -15px;
+    margin-top: -15px;
+
+}
+.flex_body {
+    display: flex;
+    justify-content: center;
+}
