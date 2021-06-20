@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <script src="../assets/js/jquery.js"></script>
@@ -11,622 +12,46 @@
     <script src="../assets/jsPsych/plugins/jspsych-survey-html-form.js"></script>
     <script src="../assets/jsPsych/plugins/jspsych-instructions.js"></script>
     <script src="../assets/jsPsych/plugins/jspsych-fullscreen.js"></script>
+    <script src="../assets/jsPsych/plugins/jspsych-call-function.js"></script>
     <link href="./jspsych.css" rel="stylesheet" type="text/css">
     <script src="../assets/psychophysics/jspsych-psychophysics.js"></script>
     <script src="../assets/js/jSignature/jSignature.min.js"></script>
-    <style>
-        .add_{
-            font-size: 25px;
-        }
-
-        body {
-            background-color: grey;
-
-        }
-        .zfx {
-            margin: 0 20px;
-        }
-        #jspsych-html-keyboard-response-stimulus {
-            width: 600px;
-            /* 中间盒子宽度 */
-            min-height: 500px;
-            /*中间盒子最小高度*/
-            display: flex;
-            /*设置弹性盒布局ee*/
-            flex-direction: column;
-            /*设置弹性盒为纵向的布局*/
-            align-items: center;
-            /*垂直居中*/
-            justify-content: space-around;
-            /*弹性盒对象的 <div> 元素中的各项周围留有空白,并且是均分的,横向的*/
-            position: relative;
-            /*绝对定位 父元素相对定位*/
-        }
-        #aaa {
-            width: 30px;
-            height: 30px;
-            line-height: 30px;
-            text-align: center;
-            font-size: 30px !important;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            margin-left: -15px;
-            margin-top: -15px;
-
-        }
-        .flex_body {
-            display: flex;
-            justify-content: center;
-        }
-
-    </style>
+    <script src="exp.js"></script>
+    <script src="utils.js"></script>
+    <script src="info.js"></script>
+    <script src="css.js"></script>
+    <link href="./index.css" rel="stylesheet" type="text/css">
     <title>测试版本</title>
 </head>
+
 <body style="text-align:center;">
 </body>
 <script>
     // 定义屏幕比例，以 高为900px 为标准
     let size_proportion = (window.screen.height / 900) - 0.1;
-    // 0.1 消除 滚动框
-    let debug_round = 6;
-    let acc = 0.4;// 正确率要求 60% 进入正式实验
-    let exper_number = "v01"; // 实验编号，v01
 
     let img = ["img/C.bmp", "img/S.bmp", "img/T.bmp"]; // 图片刺激集合
-    let word = ["好人", "坏人", "常人"]; // 文本刺激集合
-    let aaaaa = 0; // 0 为练习，1为正式一，以此类推
-    let info = {}; // 记录被试 所有信息，并放在一块，便于分析
+    let words = ["好人", "坏人", "常人"]; // 文本刺激集合
+    let info = {}; // 被试信息
+    let subjectID = "Mupsy01"; // 本次实验ID
+    let recepetion = 10; // Trial 总共需要多少所包含的试次 必须是480的倍数
+    let formNum = 80; // 单个block所包含的试次总数
+    let pracNum = 60; // 练习数量
+    let pracAcc = 0; // 练习所需正确率
 
-    let b = []; //stimulate null
-    // 1
-    let block_name = "prac"; // block 类别为练习
-    let i1 = [], sti = []; // 这两个就是为了后面排列组合成所有情况
-    let answer = jsPsych.randomization.sampleWithoutReplacement(["m", "n"], 2); // 按键，m，n 随机
-    i1 = [img[0], img[1], img[2]]; // 图片组合
-    b.push({
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    });
-    sti.push(b); // 把组合的 b 放入sti变量，再清空 b
-    b = [];
-    // 2
-    i1 = [img[0], img[2], img[1]];
-    b.push({
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    });
-    sti.push(b);
-    b = [];
-    // 3
-    i1 = [img[1], img[0], img[2]];
-    b.push({
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    });
-    sti.push(b);
-    b = [];
-    // 4
-    i1 = [img[1], img[2], img[0]];
-    b.push({
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    });
-    sti.push(b);
-    b = [];
-    // 5
-    i1 = [img[2], img[1], img[0]];
-    b.push({
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    });
-    sti.push(b);
-    b = [];
-    // 6
-    i1 = [img[2], img[0], img[1]];
-    b.push({
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[0],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[1],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[0],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[1],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[1]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    }, {
-        stimulus: i1[2],
-        item: word[2],
-        data: {
-            test_part: "test",
-            correct_response: answer[0]
-        }
-    });
-    sti.push(b);
-    b = [];
-    console.log(sti);
-
-    let round_all = 0; // 记录循环次数
-
-    // console.log(b);
-    // sti 0 - 5
-    let k = Math.floor(Math.random() * 6);  // 分组 组别  6 % 6 = 0
-    let test_stimuli = jsPsych.randomization.sampleWithoutReplacement(sti[k], sti[k].length); // 从 6 中组合抽出来一个，并打乱赋给 test_stimuli
+    let mismatch = [words.length - 1]; // 不匹配 任务数量，除非有特殊需要否则不要修改。
+    let answer = jsPsych.randomization.shuffle(["m", "n"]); // 按键随机
+    let trialInfo = { round: 0 }; // 不知道什么用，估计可以删了
+    sessionStorage.setItem("errorPrac", 0); // 判断是否练习错误
+    let sort = jsPsych.utils.permutation(mismatch, 1); // 不匹配数量排序
     // 主要时间线
     let timeline = [];
+    // 实验参数
+    let tmpArrW = order(words); // 列出 每行每列均不相等的情况
+    let sti = com(img, jsPsych.utils.deepCopy(tmpArrW));
 
+
+    
     // 开始介绍实验
     let enterFullscreenMode = {
         type: "fullscreen",
@@ -649,8 +74,7 @@
            <p style='font:24px 华文楷体; color: grey'>\
            <br/>2021年</p>",
         post_trial_gap: 100,
-        on_finish: function(){
-            info["sti_group"] = k;
+        on_finish: function () {
             info["match_key"] = answer[0];
             info["mismatch_key"] = answer[1];
         }
@@ -730,111 +154,10 @@
         button_label_previous: "返回",
         button_label_next: "继续"
     }; // 指导语 分为了 三页
-    timeline.push(enterFullscreenMode,  welcome, instr); // 介绍结束，并把上面的加入到时间线内
-
+    timeline.push(enterFullscreenMode, welcome, instr); // 介绍结束，并把上面的加入到时间线内
+    timeline.push(getInfo(subjectID));
     // 信息收集开始
-    let experinumber = {
-        type:"survey-html-form",
-        data:{
-            varname:'subjectnumber',
-        },
-        preamble:"<p style =' color : white'>你分配到的实验编号是</p>",
-        html:"<p><input name='Q0' type='text' value='" + exper_number + "' disabled='disabled' /></p><p><input name='Q1' type='number' value='' required/></p>",
-        button_label:"继续",
-        on_finish: function addRespFromSurvey(data) {
-            data.number = exper_number + data.response.Q1.padStart(4, "0");
-            info["index"] = exper_number + data.response.Q1.padStart(4, "0");
-        },
-        on_load: function () { 
-            let bb = document.getElementById("jspsych-content");
-            let label1 = document.createElement("p");
-            label1.id = "numberf", label1.textContent = "你的最终编号是：" + document.getElementsByTagName("input")[0].value + document.getElementsByTagName("input")[1].value.toString().padStart(4, "0");
-            label1.style = "font-size: 20px;color: white;";
-            bb.appendChild(label1);
-            document.getElementsByTagName("input")[1].addEventListener("input", function(a){
-                document.getElementById("numberf").textContent = "你的最终编号是：" + document.getElementsByTagName("input")[0].value + document.getElementsByTagName("input")[1].value.toString().padStart(4, "0");
-            })
-        }
-    }; // 实验 和 被试 ID
-    let number_of_experiment ={
-        type:"survey-html-form",
-        data:{
-            varname:'number_of_experiment',
-        },
-        preamble:"<p style = 'color : white'>你的实验次数是</p>",
-        html:"<p><input name='Q0' type='number' value=' ' required/></p>",
-        button_label:"继续",
-        on_finish: function addRespFromSurvey(data) {
-            info["NumbeOfExperiments"] = data.response.Q0;
-        }
-    }; // 实验次数
-    let person_name = {
-        type:"survey-html-form",
-        data:{
-            varname:'name',
-        },
-        preamble:"<p style =' color : white'>你的名字是</p>",
-        html:"<p><input name='Q0' type='text' value='' required/></p>",
-        button_label:"继续",
-        on_finish: function addRespFromSurvey(data) {
-            info["Name"] = data.response.Q0;
-        }
-    }; // 姓名
-    let sex = {
-        type: 'html-button-response',
-        data: {
-            varname: 'sex'
-        },
-        stimulus: "<p style = 'color : white'>你的性别</p>",
-        choices: ['男', '女', '其他'],
-        on_finish: function addRespFromSurvey(data) {
-            info["Sex"] = data.button_pressed == 0 ? "Male" : (data.button_pressed == 1 ? "Female" : "Other")
-        }
-    }; // 性别
-    let birth = {
-        type: 'survey-html-form',
-        data: {
-            varname: 'birth'
-        },
-        preamble: "<p style = 'color : white'>你的出生年</p>",
-        html: `
-    <p><input name="Q0" type="number" placeholder="1900~2020" min=1900 max=2020
-    oninput="if(value.length>4) value=value.slice(0,4)" required /></p>`,
-        button_label: '继续',
-        on_finish: function addRespFromSurvey(data) {
-            info["BirthYear"] = data.response.Q0;
-        }
-    }; // 出生年份
-    let edu = ["below primary school", "primary school", "junior middle school", "high school", 
-    "university", "master", "doctor", "other"];
-    let eduCN = ["小学一下", "小学", "初中", "高中", "大学", "硕士", "博士", "其他"];
-    let education = {
-        type: 'survey-html-form',
-        data: {
-            varname: 'education'
-        },
-        preamble: "<p style = 'color : white'>教育经历</p>",
-        html: `
-       <p><select name="Q0" size=10>
-       <option value=1>小学以下</option>
-       <option value=2>小学</option>
-       <option value=3>初中</option>
-       <option value=4>高中</option>
-       <option value=5>大学</option>
-       <option value=6>硕士</option>
-       <option value=7>博士</option>
-       <option value=8>其他</option>
-       </select></p>`,
-        button_label: '继续',
-        on_finish: function addRespFromSurvey(data) {
-            let bodyNode = document.getElementsByTagName("body");
-            for (let i = 0; i < bodyNode.length; i++) {
-                bodyNode[i].style.cursor = "none";
-            }
-            info["Education"] = data.response.Q0;
-        }
-    }; // 学历，8选1
-    timeline.push(experinumber, number_of_experiment, person_name, sex, birth, education, {
+    timeline.push({
         type: "html-keyboard-response",
         stimulus: "<p style ='font-size:25px; color:white'>为了保证实验中按键准确，请您按键盘上M键</p>",
         choices: ["m"]
@@ -842,236 +165,129 @@
         type: "html-keyboard-response",
         stimulus: "<p style ='font-size:25px; color:white'>为了保证实验中按键准确，请您按键盘上N键</p>",
         choices: ["n"]
-    }); // 信息收集 结束，timeline.push 把所有时间线都放进去
-
-
-    let instructions1 = {
-        type: "html-keyboard-response",
-        stimulus: "<p style= 'text-align: center; font-weight:700; font-size:25px; color : white'>请您记住如下联结:</p>" +
-            "<p style= 'text-align: center; font-weight:700; font-size:35px; color : white'>" + sti[k][0].item + "---" + (sti[k][0].stimulus.indexOf("C")!==-1 ? "圆形" : (sti[k][0].stimulus.indexOf("S")!==-1 ? "正方形" : "三角形")) + "</p>" +
-            "<p style= 'text-align: center; font-weight:700; font-size:35px; color : white'>" + sti[k][5].item + "---" + (sti[k][5].stimulus.indexOf("C")!==-1 ? "圆形" : (sti[k][5].stimulus.indexOf("S")!==-1 ? "正方形" : "三角形")) + "</p>"+
-            "<p style= 'text-align: center; font-weight:700; font-size:35px; color : white'>" + sti[k][11].item + "---" + (sti[k][11].stimulus.indexOf("C")!==-1 ? "圆形" : (sti[k][11].stimulus.indexOf("S")!==-1 ? "正方形" : "三角形")) + "</p>" +
-            "<p style= 'text-align: center; font-weight:700; font-size:25px; color : white'>您需要通过练习来学习这些对应关系；接下来，如果屏幕上出现的图形和文字符合上述关系，请按“"+answer[0]+"”键；如果图形与文字不符合上述的关系，请按“"+answer[1]+"”键。请您又快又准地进行反应</p>"+
-            "<p style = 'color : lightgreen; font-size:25px'>按任意键开始实验</p><div>",
-        post_trial_gap: 2000
-    }; // 练习开始 指导语
-
-    let feedback_trial = {
-        data: {
-            screen_id: "feedback"
-        },
-        type: "html-keyboard-response",
-        stimulus: function () {
-            let key = jsPsych.data.get().last(1).values()[0].key_press;
-            let last_trial_accuracy = jsPsych.data.get().last(1).values()[0].accuracy;
-            // let time = jsPsych.data.get().last(1).values()[0].rt;
-            if (last_trial_accuracy && key) {
-                return "<span class='add_' style='color: #adff87;'> correct! </span>"
-            } else if (!key) {
-                return "<span class='add_' style='color: yellow;'> Too slow! </span>"
-            } else {
-                return "<span class='add_' style='color: red;'> incorrect! </span>"
-            }
-        },
-        choices: jsPsych.NO_KEYS,
-        trial_duration: 300
-    }; // 每次trial反应后，显示对错或超时
-
-    let plus1 = {
-        type: "psychophysics",
-        stimuli: [
-            {
-                obj_type: 'cross',
-                startX: "center", // location of the cross's center in the canvas
-                startY: "center",
-                line_length: 30 * size_proportion,
-                line_width:5 * size_proportion,
-                line_color: 'black', // You can use the HTML color name instead of the HEX color.
-                show_start_time: 500,
-                show_end_time: 1100// ms after the start of the trial
-
-            }, // 中间的 + 号，center 意味着是中间 size_proportion 是开头的屏幕比例，以保持等比缩放
-            {
-                obj_type: 'image',
-                file: jsPsych.timelineVariable("stimulus"),
-                startX: "center", // location of the cross's center in the canvas
-                startY: 320 * size_proportion,
-                show_start_time: 1000, // ms after the start of the trial
-                show_end_time: 1100,
-                scale: size_proportion
-            }, // 呈现刺激的img，start X Y 是 以屏幕左上角为(0,0)，右下角为（Max, Max）
-            {
-                obj_type: 'text',
-                startX: "center",
-                startY: 550 * size_proportion,
-                content: jsPsych.timelineVariable("item"),
-                font: (50*size_proportion).toString() + "px 'Arial'",
-                text_color: 'white',
-                show_start_time: 1000, // ms after the start of the trial
-                show_end_time: 1100
-            } // 呈现刺激的 文本，
-        ],
-        choices: [answer[0], answer[1]], // 按键，即 m n 键
-        canvas_height:900 * size_proportion, // 等比缩放canvas
-        response_start_time: 1000, // 反应开始时间限定
-        data: function () {
-            round_all += 1; // 记录实次用的
-            let t = jsPsych.timelineVariable("stimulus", true); // 获取时间线stimulus变量
-            let w = jsPsych.timelineVariable("item", true); // 获取时间线item变量
-            let key = jsPsych.timelineVariable("data", true); // 获取时间线data变量
-            let ppp = sti[k][sti[k].findIndex(function(a){if(a.stimulus.indexOf(t)!==-1 && a.data.correct_response == answer[0]){return a}})]["item"]; // 提取 shape对应的item，便于后面的保存匹配状态下的ShapeMeaning
-            return {
-                TimeStamp: Date.now(),
-                Subject: info["index"],
-                NumberOfExper: info["NumbeOfExperiments"],
-                Name: info["Name"],
-                Sex: info["Sex"],
-                BirthYear: info["BirthYear"],
-                Education: eduCN[info["Education"] - 1],
-                EducationEn: edu[info["Education"] - 1],
-                StiGroup: info["sti_group"],
-                MatchKey: info["match_key"],
-                MisMatchKey: info["mismatch_key"],
-                Shape: t,//刺激类型
-                ShapeName: (t.indexOf("C")!==-1 ? "circular" : (t.indexOf("S")!==-1 ? "square" : "triangle")),
-                Label: w,
-                LabelName: (w === "好人") ? "good" : ((w === "坏人") ? "bad" : "ordinary"),
-                ShapeMeaning: (ppp === "好人") ? "good" : ((ppp === "坏人") ? "bad" : "ordinary"),
-                Correctkey: key.correct_response,
-                Match: w === ppp ? "Match" : "Mismatch",
-                save: true, // 需要保存的筛选数据, 并以此为分界线，上面是对于实验刺激信息的保存，下面是对于实验块信息的保存
-                test_part: key.test_part + frequency,
-                trial: aaaaa,
-                block: block_name + "_" + aaaaa.toString(),
-                block_id: aaaaa.toString(), // block 出现的顺序
-                trial_id: (round_all - 1) % 12 + 1, // 每个block里试次出现的顺序
-                block_type: block_name, // prac test 练习还是正式实验
-                trial_type_num: (round_all % 12) ? parseInt(round_all/12) + 1 : parseInt(round_all/12), //记录试次循环
-            }
-        },
-        on_finish: function (data) {
-            data.accuracy = data.Correctkey === data.key_press;
-            // 加个正确率判断，因为keyboard反应后，仅在这里能获取，上面的data: {}不能获得
-        },
-        trial_duration: 2200, // 刺激呈现时间
-        background_color: "grey" // 背景灰色
-    }; // 实验核心，主题程序
-
-    let frequency = 0;
-    let trial1 = {
-        timeline: [
-            plus1,
-            feedback_trial
-        ],
-        timeline_variables: test_stimuli,
-        randomize_order: true,
-        loop_function: function () {
-            let accuracy = jsPsych.data.get().filter({accuracy: true, test_part: "test" + (frequency)}).count() / jsPsych.data.get().filter({test_part: "test" + (frequency)}).count();
-            console.log(accuracy);
-            frequency += 1;
-            // 判断是否错误过多
-            if (accuracy >= acc && frequency<=1) {
-                return true;
-                // frequency 循环次数不大于1的话， 就继续练习
-            } else if (accuracy >= acc) {
-                let feedback_all_block = {
-                    type: "html-keyboard-response",
-                    stimulus: function () {
-                        // aaaaa = 1;
-                        frequency -= 1;
-                        let trials = jsPsych.data.get().filter({
-                            block: 'test_' + aaaaa.toString()
-                        });
-                        let correct_trials = trials.filter({
-                            accuracy: true
-                        });
-                        let accuracy = Math.round(correct_trials.count() / trials.count() * 100);
-                        let rt = Math.round(correct_trials.select('rt').mean());
-                        frequency += 1;
-                        return "<style>.context{color:white; font-size: 30px;}</style>\
-                            <div><p class='context'>你正确回答了" + accuracy + "% 的试次。</p>" +
-                            "<p class='context'>你的平均反应时为" + rt + "毫秒。</p>" +
-                            "<p class='context'>请按任意键继续实验!</p></div>";
-                    }
-                }; // 练习结束反馈阶段，并进入正式实验
-                jsPsych.pauseExperiment();
-                jsPsych.addNodeToEndOfTimeline({
-                    timeline: [feedback_all, rest, trial2, feedback_all_block, rest1, trial2, feedback_all_block, rest1, trial2, feedback_all_block, rest1, trial2, feedback_all_block, rest1, trial2, feedback_all_block, rest1, trial2, feedback_all_block]
-                }, jsPsych.resumeExperiment);
-            } else {
-                aaaaa = 0;
-                jsPsych.pauseExperiment();
-                jsPsych.addNodeToEndOfTimeline({
-                    timeline: [feedback_all, {
-                        type: "html-keyboard-response",
-                        stimulus: "<p style='color:white ;font-size : 25px'>错误次数过多，请按任意键重新进行实验～</p>",
-                        choices: jsPsych.ALL_KEYS
-                    },instructions1, trial1]
-                }, function(){ jsPsych.resumeExperiment(); aaaaa += 1; });
-            }
-        }
-    }; // 练习阶段 实验程序
-    timeline.push(instructions1, trial1); // 练习阶段
-
-    let feedback_all = {
-        type: "html-keyboard-response",
-        stimulus: function () {
-            // aaaaa = 1;
-            frequency -= 1;
-            let trials = jsPsych.data.get().filter({
-                test_part: 'test' + frequency
+    }, {
+        type: "call-function",
+        func: function () {
+            let typeSort = sort[info["index"].replace(subjectID, "") % sort.length];
+            let typeThis = mismatch.indexOf(typeSort[info["frequencyOfExper"]]);
+            // exp 学习阶段
+            jsPsych.addNodeToEndOfTimeline({
+                type: "html-button-response",
+                stimulus: "<p class='head'>接下来，请你记住下面的联结:</p>" + getMatchWord(sti.match) + "<p class='footer'>然后你会需要回答一些问题，准备好了请点击 继续 </p>",
+                choices: ["继续"],
+                on_finish: function () {
+                    sessionStorage.setItem("errorStudy", 0);
+                }
             });
-            let correct_trials = trials.filter({
-                accuracy: true
-            });
-            let accuracy = Math.round(correct_trials.count() / trials.count() * 100);
-            let rt = Math.round(correct_trials.select('rt').mean());
-            frequency += 1;
-            return "<p style = 'color:white'>你正确回答了" + accuracy + "% 的试次。</p>" +
-                "<p style = 'color:white'>你的平均反应时为" + rt + "毫秒。</p>" +
-                "<p style = 'color:white'>请按任意键进入正式实验!</p>";
-        }
-    }; // 练习结束反馈阶段
-
-    let rest = {
-        type: "html-keyboard-response",
-        stimulus: "<p style = 'color : white; font-size : 30px'>按任意键开始正式实验</p>",
-        on_finish: function(){ aaaaa =1; block_name = "test"; round_all=0; },
-        post_trial_gap:2000
-
-    }; // 休息阶段
-    let rest1 = {
-        timeline: [
-            {
-                type: "html-keyboard-response",
-                trial_duration: 10000, // 休息时间
-                stimulus: "<p style = 'color: white; font-size : 30px' >休息一下<span id='iii'>10</span>秒</p>",
-                on_load: function() {
-                    aaaaa += 1;
-                    let reduce = function () {
-                        if (document.getElementById("iii").innerText > 1) {
-                            document.getElementById("iii").innerText = (parseInt(document.getElementById("iii").innerText) - 1).toString();
-                            setTimeout(reduce, 1000);
+            jsPsych.addNodeToEndOfTimeline({
+                timeline: [{
+                    timeline: [{
+                        type: "html-button-response",
+                        stimulus: "<p class='head'>注意，错误次数过多，请你仔细记住下面的联结:</p>" + getMatchWord(sti.match) + "<p class='footer'>然后你会需要回答一些问题，准备好了请点击 继续 </p>",
+                        choices: ["继续"],
+                        on_finish: function () {
+                            sessionStorage.setItem("errorStudy", 0);
                         }
-                    };
-                    reduce();
-                },
-                choices: jsPsych.NO_KEYS
-            },
-            {
-                type: "html-keyboard-response",
-                stimulus: "<p style = 'color : white; font-size : 30px'>休息结束，请按 m 或 n 键开始实验</p><p style = 'color:yellow'>请保证您的手指轻放在 m和n 键上 以随时准备实验</p>",
-                choices: jsPsych.ALL_KEYS
-            }
-        ]
-    }; // 正式阶段 每个block的10秒钟休息时间
-    let trial2 = {
-        timeline: [plus1,feedback_trial],
-        timeline_variables: test_stimuli,
-        randomize_order: true,
-        repetitions: debug_round
-    };//正式实验
+                    }],
+                    conditional_function: function () {
+                        if (parseInt(sessionStorage.getItem("errorStudy"))) {
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                }, {
+                    type: "html-button-response",
+                    stimulus: function () {
+                        return "<p class='content' style='margin-block: 50px'>请问，<img src='" + jsPsych.timelineVariable("img", true) + "' >这张图片对应的人物标签是？</p>";
+                    },
+                    choices: words,
+                    on_finish: function (data) {
+                        data.style = "study";
+                        data.acc = words[data.response] === jsPsych.timelineVariable("word", true) ? 1 : 0;
+                        // console.log(tags[data.response], jsPsych.timelineVariable("word", true));
+                    }
+                }],
+                timeline_variables: jsPsych.randomization.repeat(sti.match, 5),
+                loop_function: function () {
+                    let data = jsPsych.data.get().filter({ style: "study" }).select("acc").mean();
+                    if (data && data > pracAcc) {
+                        sessionStorage.setItem("errorStudy", 0);
+                        return false;
+                    } else {
+                        sessionStorage.setItem("errorStudy", 1);
+                        return true;
+                    }
+                }
+            });
+            // exp 学习阶段 end
 
+            // exp
+            let exp = exp_process(sti, typeThis);
+            jsPsych.addNodeToEndOfTimeline({
+                timeline: exp
+            });
+            // exp end
+        }
+    }); // 信息收集 结束，timeline.push 把所有时间线都放进去
+// 主要实验程序
+let trial = {
+    type: "psychophysics",
+    stimuli: [
+        {
+            obj_type: 'cross',
+            startX: "center", // location of the cross's center in the canvas
+            startY: "center",
+            line_length: 30,
+            line_width: 5,
+            line_color: 'white', // You can use the HTML color name instead of the HEX color.
+            show_start_time: 500,
+            show_end_time: 1100// ms after the start of the trial
+        }, {
+            obj_type: 'image',
+            file: function () {
+                return jsPsych.timelineVariable("img", true);
+            },
+            startX: "center", // location of the cross's center in the canvas
+            startY: $(document).outerHeight() / 2 - 128 * 0.8 - 50,
+            show_start_time: 1000, // ms after the start of the trial
+            show_end_time: 1100,
+            scale: 0.8
+        }, {
+            obj_type: 'text',
+            startX: "center",
+            startY: $(document).outerHeight() / 2 + 100,
+            content: function () {
+                return jsPsych.timelineVariable("word", true);
+            },
+            font: (50).toString() + "px 'Arial'",
+            text_color: 'white',
+            show_start_time: 1000, // ms after the start of the trial
+            show_end_time: 1100
+        }
+    ],
+    choices: [answer[0], answer[1]], // 0 always is match condition
+    response_start_time: 1000,
+    trial_duration: 2500, // 刺激呈现时间
+    background_color: "grey", // 背景灰色
+    on_finish: function (data) {
+        trialInfo["round"] = trialInfo["round"] ? trialInfo["round"] + 1 : 1;
+        // trial information
+        data.img = jsPsych.timelineVariable("img", true).replace("matching/img/", "").replace(".png", "");
+        data.word = jsPsych.timelineVariable("word", true);
+        data.condition = jsPsych.timelineVariable("condition", true);
+        // reaction
+        data.rt = data.rt;
+        data.acc = ((answer[0] === data.key_press && data.condition === "match") || (answer[1] === data.key_press && data.condition === "mismatch")) ? 1 : 0;
+        // data.type = trialInfo["type"];
+        data.round = trialInfo["round"];
+        data.save = true;
+        $(document).unbind("touchstart", touch);
+    },
+    on_load: function () {
+        $(document).on("touchstart", touch);
+    }
+};
     jsPsych.init({
         timeline: timeline,
         preload_images: img, // 预先加载图片，以免延迟
@@ -1080,21 +296,22 @@
                 "<p style = 'color:white; font-size : 20px'>如果您对实验结果感兴趣，可以发邮件与我联系。</p >" +
                 "<p style = 'color:white; font-size : 20px'>郑元瑞（Email: aaronzheng87@gmail.com） </p ></div>";
             // 保存实验数据
-            jsPsych.data.get().filter({save: true}).localSave('csv', info["index"] + '.csv');
-            jsPsych.data.get().filter({save: true}).filterColumns(["rt", "accuracy", "TimeStamp","Subject","NumberOfExper",
-                "Name","Sex","BirthYear","Education", "EducationEn", "StiGroup","MatchKey","MisMatchKey","Shape","ShapeName",
-                "Label","LabelName","ShapeMeaning","Correctkey","Match","test_part",
-                "trial","block","block_id","trial_id","block_type","trial_type_num", "key_press"]).localSave('csv', "ColumnsSort" + info["index"] + '.csv');
+            jsPsych.data.get().filter({ save: true }).localSave('csv', info["index"] + '.csv');
+            jsPsych.data.get().filter({ save: true }).filterColumns(["rt", "accuracy", "TimeStamp", "Subject", "NumberOfExper",
+                "Name", "Sex", "BirthYear", "Education", "EducationEn", "StiGroup", "MatchKey", "MisMatchKey", "Shape", "ShapeName",
+                "Label", "LabelName", "ShapeMeaning", "Correctkey", "Match", "test_part",
+                "trial", "block", "block_id", "trial_id", "block_type", "trial_type_num", "key_press"]).localSave('csv', "ColumnsSort" + info["index"] + '.csv');
             document.exitFullscreen(); // 退出全屏
             let bodyNode = document.getElementsByTagName("body"); // 获取Body窗体
             for (let i = 0; i < bodyNode.length; i++) {
                 bodyNode[i].style.cursor = "default";// 显示鼠标
-                setTimeout(function(){
+                setTimeout(function () {
                     window.close(); // 关闭页面
-                },10000)
+                }, 10000)
             }
         }
     })
 
 </script>
+
 </html>

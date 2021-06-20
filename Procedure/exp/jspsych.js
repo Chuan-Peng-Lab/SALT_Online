@@ -2966,6 +2966,17 @@ jsPsych.utils = (function() {
     }
   }
 
+  module.permutation = function (arr, num) {
+    var r = [];
+    (function f(t, a, n) {
+        if (n == 0) return r.push(t);
+        for (var i = 0, l = a.length; i < l; i++) {
+            f(t.concat(a[i]), a.slice(0, i).concat(a.slice(i + 1)), n - 1);
+        }
+    })([], arr, num);
+    return r;
+}
+
 	return module;
 })();
 
