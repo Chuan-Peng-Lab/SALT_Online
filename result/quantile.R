@@ -1,4 +1,7 @@
+
+
 rm(list = ls()) 
+setwd("~/Desktop/SALT_Online/result")
 library(tidyverse)
 
 # Jspsych 图

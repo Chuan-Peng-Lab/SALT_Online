@@ -29,7 +29,7 @@ a.innerHTML = `
 }
 
 .content img {
-    scale: 0.5;
+    transform: scale(0.5, 0.5);
     width: 128px;
     height: 128px;
     vertical-align: middle;

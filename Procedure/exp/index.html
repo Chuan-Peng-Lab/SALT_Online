@@ -33,7 +33,7 @@
     let img = ["img/C.bmp", "img/S.bmp", "img/T.bmp"]; // 图片刺激集合
     let words = ["好人", "坏人", "常人"]; // 文本刺激集合
     let info = {}; // 被试信息
-    let subjectID = "Mupsy01"; // 本次实验ID
+    let subjectID = "V01"; // 本次实验ID
     let recepetion = 10; // Trial 总共需要多少所包含的试次 必须是480的倍数
     let formNum = 80; // 单个block所包含的试次总数
     let pracNum = 60; // 练习数量
@@ -50,7 +50,7 @@
     let tmpArrW = order(words); // 列出 每行每列均不相等的情况
     let sti = com(img, jsPsych.utils.deepCopy(tmpArrW));
 
-
+// jsPsych.addNodeToEndOfTimeline
     
     // 开始介绍实验
     let enterFullscreenMode = {
@@ -177,6 +177,9 @@
                 choices: ["继续"],
                 on_finish: function () {
                     sessionStorage.setItem("errorStudy", 0);
+                },
+                on_load: function() { 
+                    $(document.body).css("cursor", "default");
                 }
             });
             jsPsych.addNodeToEndOfTimeline({

@@ -157,7 +157,8 @@ function exp_process(sti, typeThis) {
                 tmpA.push(tmp);
             }
         });
-        timevar = tmpA[typeThis];
+        console.log(tmpA);
+        let timevar = tmpA[0]; // 固定了 就直接
         let tmpMaxMis = [];
         tmpA.forEach(v => {
             if (tmpMaxMis.length < v.length) { 
