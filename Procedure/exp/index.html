@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="../assets/js/jquery.js"></script>
+    <!-- jsPsych 核心 -->
     <script src='./jspsych.js'></script>
     <script src='../assets/jsPsych/plugins/jspsych-html-keyboard-response.js'></script>
     <script src='../assets/jsPsych/plugins/jspsych-survey-text.js'></script>
@@ -15,7 +16,8 @@
     <script src="../assets/jsPsych/plugins/jspsych-call-function.js"></script>
     <link href="./jspsych.css" rel="stylesheet" type="text/css">
     <script src="../assets/psychophysics/jspsych-psychophysics.js"></script>
-    <script src="../assets/js/jSignature/jSignature.min.js"></script>
+    <!-- <script src="../assets/js/jSignature/jSignature.min.js"></script> -->
+    <!-- 实验程序核心 -->
     <script src="exp.js"></script>
     <script src="utils.js"></script>
     <script src="info.js"></script>
@@ -26,19 +28,22 @@
 
 <body style="text-align:center;">
 </body>
+<!-- 
+    注释的目录
+ -->
 <script>
     // 定义屏幕比例，以 高为900px 为标准
     let size_proportion = (window.screen.height / 900) - 0.1;
 
     let img = ["img/C.bmp", "img/S.bmp", "img/T.bmp"]; // 图片刺激集合
     let words = ["好人", "坏人", "常人"]; // 文本刺激集合
-    let info = {}; // 被试信息
     let subjectID = "V01"; // 本次实验ID
-    let recepetion = 10; // Trial 总共需要多少所包含的试次 必须是480的倍数
+    let recepetion = 10; // Trial 总共需要多少所包含的试次
     let formNum = 80; // 单个block所包含的试次总数
     let pracNum = 60; // 练习数量
-    let pracAcc = 0; // 练习所需正确率
+    let pracAcc = 0.6; // 练习所需正确率
 
+    let info = {}; // 被试信息
     let mismatch = [words.length - 1]; // 不匹配 任务数量，除非有特殊需要否则不要修改。
     let answer = jsPsych.randomization.shuffle(["m", "n"]); // 按键随机
     let trialInfo = { round: 0 }; // 不知道什么用，估计可以删了
@@ -49,8 +54,6 @@
     // 实验参数
     let tmpArrW = order(words); // 列出 每行每列均不相等的情况
     let sti = com(img, jsPsych.utils.deepCopy(tmpArrW));
-
-// jsPsych.addNodeToEndOfTimeline
     
     // 开始介绍实验
     let enterFullscreenMode = {
@@ -313,7 +316,7 @@ let trial = {
                 }, 10000)
             }
         }
-    })
+    });
 
 </script>
 
