@@ -5,6 +5,7 @@
 为了验证该程序的有效性，我们使用在线方式重复了[胡传鹏博士论文](http://www.chinaxiv.org/abs/201909.00137)中的第一个实验。该实验使用道德人物作为社会联结学习的标签（好人、常人和坏人）。以下是实验室原始实验与使用当前程序的在线实验之间的比较。
 
 [>>实验程序<<](Procedure/README.md) | [>>详细结果<<](result/README.md)
+
 ## 实验参数
 
 实验室实验:
@@ -54,3 +55,26 @@ dprime.icc1
 ![dprime icc](result/doc/ICC.jpeg)
 
 结果表明，被试在两次实验中的结果具有较高的相似性，有较好的信度。
+
+## 目录结构
+```shell
+.
+├── Procedure  实验程序
+├── result     实验数据以及分析
+└── README.md
+```
+
+## 使用说明
+
+首先就是克隆本仓库。
+```shell
+git clone https://github.com/Chuan-Peng-Lab/SALT_Online.git
+```
+
+假设保存的文件名为`SALT_Online`，然后需要对于子模块进行初始化和获取
+```shell
+cd ./SALT_Online
+git submodule update --init
+```
+
+然后就可以通过打开`Procedure/exp/index.html`运行实验啦～

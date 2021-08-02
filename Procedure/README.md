@@ -10,20 +10,20 @@
 ```shell
 .
 ├── README.md
-├── assets----------------资源存放
-│   ├── js----------------JS部分文件
-│   ├── jspsych----------------jsPsych 主体位置
-│   └── psychophysics----------------jspsych psychophysics所处位置
-└── exp----------------实验程序所处位置
-    ├── css.js----------------样式文件
-    ├── exp.js----------------定义实验流程
-    ├── img----------------图片存放位置
-    ├── index.css----------------样式文件
-    ├── index.html----------------核心文件，如需使用，请在浏览器打开这个文件
-    ├── info.js----------------收集信息，被试的信息
-    ├── jspsych.css----------------jspsych样式文件
-    ├── jspsych.js----------------修改过一些的jspsych主体文件
-    └── utils.js----------------工具箱
+├── assets             资源存放
+│   ├── js             JS部分文件
+│   ├── jspsych        jsPsych 主体位置
+│   └── psychophysics  jspsych psychophysics所处位置
+└── exp                实验程序所处位置
+    ├── css.js         样式文件
+    ├── exp.js         定义实验流程
+    ├── img            图片存放位置
+    ├── index.css      样式文件
+    ├── index.html     核心文件，如需使用，请在浏览器打开这个文件
+    ├── info.js        收集信息，被试的信息
+    ├── jspsych.css    jspsych样式文件
+    ├── jspsych.js     修改过一些的jspsych主体文件
+    └── utils.js       工具箱
 ```
 
 ## 实验运行步骤
