@@ -52,7 +52,7 @@
     // 主要时间线
     let timeline = [];
     // 实验参数
-    let tmpArrW = order(words); // 列出 每行每列均不相等的情况
+    let tmpArrW = jsPsych.randomization.shuffle(order(words)); // 列出 每行每列均不相等的情况
     let sti = com(img, jsPsych.utils.deepCopy(tmpArrW));
     
     // 开始介绍实验
