@@ -47,11 +47,11 @@ function exp(variable, trial, match, maxMismatch) {
             stimulus: function () {
                 let a = jsPsych.data.get().last(1).values()[0];
                 if (a.acc) {
-                    return "正确";
+                    return "<span style='font-size: 40px;'>正确</span>";
                 } else if (a.key_press) {
-                    return "错误";
+                    return "<span style='font-size: 40px;'>错误</span>";
                 } else {
-                    return "太慢";
+                    return "<span style='font-size: 40px;'>太慢</span>";
                 }
             },
             choices: jsPsych.NO_KEYS,
