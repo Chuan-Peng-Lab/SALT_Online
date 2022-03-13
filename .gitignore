@@ -1,7 +1,5 @@
 # Mac
 .DS_Store
 # Data
-*data/
-*data[0-9]/
 *.Rhistory
 *.pptx
