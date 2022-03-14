@@ -25,6 +25,13 @@
         display_element: undefined,
         on_finish: () => {
             jspsych.data.displayData("json");
+
+            let ID = jspsych.randomization.randomID();
+            jspsych.github.upload(
+                `${ID}.csv`,
+                `${ID} is finished`,
+                jspsych.data.get().csv()
+            )
         },
         default_iti: 500,
         extensions: [],
@@ -32,6 +39,12 @@
         loadPath: "core",
         autoLoadAssets: true,
         allowRestart: true
+    });
+    jspsych.github = new GitHub({
+        owner: "Chuan-Peng-Lab",
+        repo: "SALT_Online",
+        path: "/3_RawData/3_1_raw_data",
+        token: ""
     });
 
     let timeline = [];
@@ -53,14 +66,14 @@
                 color: "white",
                 v_angle: 0.5,
                 show_start_time: 500,
-                // show_end_time: 1100
+                show_end_time: 1100
             }, {
                 obj_type: "image",
                 v_angle: 1.2,
                 content: jspsych.timelineVariable("img"),
                 bias_angle: 1.2,
                 show_start_time: 1000,
-                // show_end_time: 1100
+                show_end_time: 1100
             }, {
                 obj_type: "text",
                 v_angle: 1.2,
@@ -68,7 +81,7 @@
                 color: "white",
                 bias_angle: 1.2,
                 show_start_time: 1000,
-                // show_end_time: 1100
+                show_end_time: 1100
             }],
             distance: 500,
             screen: function () {
@@ -79,9 +92,12 @@
                     actualH: jspsych.data.get().values()[1].screen_height_physics
                 }
             },
-            // trial_duration: 2500,
+            trial_duration: 2500,
             response_start_time: 1100,
-            choices: ["n", "m"]
+            choices: ["n", "m"],
+            on_finish: function(data) {
+                data.condition = word.indexOf(data.stim_word) == img.indexOf(data.stim_img) ? "match" : "mismatch"
+            }
         }],
         timeline_variables: jspsych.randomization.factorial({
             word: word,
