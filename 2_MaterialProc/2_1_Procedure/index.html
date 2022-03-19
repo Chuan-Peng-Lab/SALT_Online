@@ -18,8 +18,9 @@
 
 <body></body>
 <script type="text/javascript">
-    let img = ["img/Cir.png", "img/FiveStar.png", "img/Pen.png", "img/Squ.png", "img/Tra.png", "img/Tri.png"];
-    let word = ["三角形", "五角星", "五边形", "正方形", "梯形", "三角形"];
+    let img = ["img/Cir.png", "img/Squ.png", "img/Tri.png"];
+    let word = ["好人", "坏人", "常人"];
+    let answer = Random.shuffle(["m", "n"]);
 
     let jspsych = new jsPsych({
         display_element: undefined,
@@ -52,6 +53,25 @@
         type: "preload",
         images: img
     }, {
+        type: "html-keyboard-response",
+        stimulus:
+            "<p style='font: bold 42px 华文楷体; color: #adff87'>\
+           欢迎参与我们的实验</p>\
+           <p style='font：30px S华文楷体; color: white'><br/>\
+           <按任意键继续><br/><b>实验过程中请勿退出全屏</b>\
+           <br/><br/></p>\
+           <p style='font:24px 华文楷体; color: grey'>\
+           <br/>2021年</p>",
+        post_trial_gap: 100
+    }, {
+        type: "fullscreen",
+        fullscreen_mode: true,
+        message: "<p style = 'color : white'>实验需要全屏模式</p>",
+        button_label: "点击这里进入全屏",
+        data: {
+            hhhh: 123
+        }
+    }, {
         type: "get-screen-size",
         prompt: "请放置卡片",
         starting_size: 500
@@ -64,7 +84,7 @@
                 obj_type: "cross",
                 lineWidth: 5,
                 color: "white",
-                v_angle: 0.5,
+                v_angle: 1.2,
                 show_start_time: 500,
                 show_end_time: 1100
             }, {
@@ -86,17 +106,17 @@
             distance: 500,
             screen: function () {
                 return {
-                    pixelW: jspsych.data.get().values()[1].screen_width_pixel,
-                    pixelH: jspsych.data.get().values()[1].screen_height_pixel,
-                    actualW: jspsych.data.get().values()[1].screen_width_physics,
-                    actualH: jspsych.data.get().values()[1].screen_height_physics
+                    pixelW: jspsych.data.get().values()[3].screen_width_pixel,
+                    pixelH: jspsych.data.get().values()[3].screen_height_pixel,
+                    actualW: jspsych.data.get().values()[3].screen_width_physics,
+                    actualH: jspsych.data.get().values()[3].screen_height_physics
                 }
             },
             trial_duration: 2500,
             response_start_time: 1100,
             choices: ["n", "m"],
             on_finish: function(data) {
-                data.condition = word.indexOf(data.stim_word) == img.indexOf(data.stim_img) ? "match" : "mismatch"
+                data.condition = word.indexOf(data.stim_word) == img.indexOf(data.stim_img) ? "match" : "mismatch";
             }
         }],
         timeline_variables: jspsych.randomization.factorial({
