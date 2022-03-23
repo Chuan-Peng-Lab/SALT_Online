@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     <meta name="robots" content="none">
     <meta name="renderer" content="webkit">
+
     <script src="./core/jspsych.js"></script>
     <link rel="stylesheet" href="./core/jspsych.css">
     <style>
@@ -27,12 +28,10 @@
         on_finish: () => {
             jspsych.data.displayData("json");
 
-            let ID = jspsych.randomization.randomID();
-            jspsych.github.upload(
-                `${ID}.csv`,
-                `${ID} is finished`,
-                jspsych.data.get().csv()
-            )
+            jspsych.data.get().filter({ save: true }).localSave('csv', 'raw_data.csv');
+            jspsych.data.get().filter({ save: true }).filterColumns(["subj_idx",
+                "stim_img", "stim_word", "condition", "shape_association", "response", "acc", "rt"
+            ]).localSave('csv', 'ColumnsSort_raw_data.csv');
         },
         default_iti: 500,
         extensions: [],
@@ -40,12 +39,6 @@
         loadPath: "core",
         autoLoadAssets: true,
         allowRestart: true
-    });
-    jspsych.github = new GitHub({
-        owner: "Chuan-Peng-Lab",
-        repo: "SALT_Online",
-        path: "/3_RawData/3_1_raw_data",
-        token: ""
     });
 
     let timeline = [];
@@ -116,7 +109,13 @@
             response_start_time: 1100,
             choices: ["n", "m"],
             on_finish: function(data) {
-                data.condition = word.indexOf(data.stim_word) == img.indexOf(data.stim_img) ? "match" : "mismatch";
+                data.shape_association = word[img.indexOf(data.stim_img)]; // 图形所代表的意义
+                data.condition = word.indexOf(data.stim_word) == img.indexOf(data.stim_img) ? "match" : "mismatch"; // 匹配程度
+                data.acc = (
+                    (answer[0] === data.response && data.condition === "match") || 
+                    (answer[1] === data.response && data.condition === "mismatch")
+                ) ? true : false;
+                data.save = true;
             }
         }],
         timeline_variables: jspsych.randomization.factorial({
