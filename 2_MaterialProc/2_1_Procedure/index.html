@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    <meta name="robots" content="none">
+    <meta name="renderer" content="webkit">
+
+    <script src="./core/jspsych.js"></script>
+    <link rel="stylesheet" href="./core/jspsych.css">
+    <style>
+        html,
+        body {
+            background-color: grey;
+        }
+    </style>
+</head>
+
+<body></body>
+<script type="text/javascript">
+    let img = ["img/Cir.png", "img/Squ.png", "img/Tri.png"];
+    let word = ["好人", "坏人", "常人"];
+    let answer = Random.shuffle(["m", "n"]);
+
+    let jspsych = new jsPsych({
+        display_element: undefined,
+        on_finish: () => {
+            jspsych.data.displayData("json");
+
+            let github_token = "";
+            let ID = jspsych.randomization.randomID();
+            new GitHub({
+                owner: "Chuan-Peng-Lab",
+                repo: "SALT_Online",
+                path: "/3_RawData/3_1_raw_data",
+                token: github_token
+            }).upload(
+                `${ID}.csv`,
+                `${ID} is finished`,
+                jspsych.data.get().filter({ save: true }).csv()
+            )
+            new GitHub({
+                owner: "Chuan-Peng-Lab",
+                repo: "SALT_Online",
+                path: "/3_RawData/3_2_pretreatment_data",
+                token: github_token
+            }).upload(
+                `${ID}.csv`,
+                `${ID} is finished`,
+                jspsych.data.get().filter({ save: true }).filterColumns(["subj_idx",
+                    "stim_img", "stim_word", "condition", "shape_association", "response", "acc", "rt"
+                ]).csv()
+            )
+        },
+        default_iti: 500,
+        extensions: [],
+        distance: 500,
+        loadPath: "core",
+        autoLoadAssets: true,
+        allowRestart: true
+    });
+
+    let timeline = [];
+    timeline.push({
+        type: "preload",
+        images: img
+    }, {
+        type: "html-keyboard-response",
+        stimulus:
+            "<p style='font: bold 42px 华文楷体; color: #adff87'>\
+           欢迎参与我们的实验</p>\
+           <p style='font：30px S华文楷体; color: white'><br/>\
+           <按任意键继续><br/><b>实验过程中请勿退出全屏</b>\
+           <br/><br/></p>\
+           <p style='font:24px 华文楷体; color: grey'>\
+           <br/>2021年</p>",
+        post_trial_gap: 100
+    }, {
+        type: "get-screen-size",
+        prompt: "请放置卡片",
+        starting_size: 500
+    });
+
+    timeline.push({
+        timeline: [{
+            type: "SALT",
+            stimuli: [{
+                obj_type: "cross",
+                lineWidth: 5,
+                color: "white",
+                v_angle: 1.2,
+                show_start_time: 500,
+                show_end_time: 1100
+            }, {
+                obj_type: "image",
+                v_angle: 1.2,
+                content: jspsych.timelineVariable("img"),
+                bias_angle: 1.2,
+                show_start_time: 1000,
+                show_end_time: 1100
+            }, {
+                obj_type: "text",
+                v_angle: 1.2,
+                content: jspsych.timelineVariable("word"),
+                color: "white",
+                bias_angle: 1.2,
+                show_start_time: 1000,
+                show_end_time: 1100
+            }],
+            distance: 500,
+            screen: function () {
+                return {
+                    pixelW: jspsych.data.get().values()[2].screen_width_pixel,
+                    pixelH: jspsych.data.get().values()[2].screen_height_pixel,
+                    actualW: jspsych.data.get().values()[2].screen_width_physics,
+                    actualH: jspsych.data.get().values()[2].screen_height_physics
+                }
+            },
+            trial_duration: 2500,
+            response_start_time: 1100,
+            choices: ["n", "m"],
+            data: {
+                shape_association: word[img.indexOf(jspsych.timelineVariable("img"))],
+                condition: word.indexOf(jspsych.timelineVariable("word")) == img.indexOf(jspsych.timelineVariable("img")) ? "match" : "mismatch"
+            },
+            on_finish: function (data) {
+                data.acc = (
+                    (answer[0] === data.key_press && data.condition === "match") ||
+                    (answer[1] === data.key_press && data.condition === "mismatch")
+                ) ? 1 : 0;
+            }
+        }],
+        timeline_variables: jspsych.randomization.factorial({
+            word: word,
+            img: img
+        })
+    })
+
+    jspsych.run(timeline);
+</script>
+
+</html>
