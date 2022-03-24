@@ -11,7 +11,8 @@
     <script src="./core/jspsych.js"></script>
     <link rel="stylesheet" href="./core/jspsych.css">
     <style>
-        html, body {
+        html,
+        body {
             background-color: grey;
         }
     </style>
@@ -28,10 +29,30 @@
         on_finish: () => {
             jspsych.data.displayData("json");
 
-            jspsych.data.get().filter({ save: true }).localSave('csv', 'raw_data.csv');
-            jspsych.data.get().filter({ save: true }).filterColumns(["subj_idx",
-                "stim_img", "stim_word", "condition", "shape_association", "response", "acc", "rt"
-            ]).localSave('csv', 'ColumnsSort_raw_data.csv');
+            let github_token = "";
+            let ID = jspsych.randomization.randomID();
+            new GitHub({
+                owner: "Chuan-Peng-Lab",
+                repo: "SALT_Online",
+                path: "/3_RawData/3_1_raw_data",
+                token: github_token
+            }).upload(
+                `${ID}.csv`,
+                `${ID} is finished`,
+                jspsych.data.get().filter({ save: true }).csv()
+            )
+            new GitHub({
+                owner: "Chuan-Peng-Lab",
+                repo: "SALT_Online",
+                path: "/3_RawData/3_2_pretreatment_data",
+                token: github_token
+            }).upload(
+                `${ID}.csv`,
+                `${ID} is finished`,
+                jspsych.data.get().filter({ save: true }).filterColumns(["subj_idx",
+                    "stim_img", "stim_word", "condition", "shape_association", "response", "acc", "rt"
+                ]).csv()
+            )
         },
         default_iti: 500,
         extensions: [],
@@ -56,14 +77,6 @@
            <p style='font:24px 华文楷体; color: grey'>\
            <br/>2021年</p>",
         post_trial_gap: 100
-    }, {
-        type: "fullscreen",
-        fullscreen_mode: true,
-        message: "<p style = 'color : white'>实验需要全屏模式</p>",
-        button_label: "点击这里进入全屏",
-        data: {
-            hhhh: 123
-        }
     }, {
         type: "get-screen-size",
         prompt: "请放置卡片",
@@ -99,23 +112,24 @@
             distance: 500,
             screen: function () {
                 return {
-                    pixelW: jspsych.data.get().values()[3].screen_width_pixel,
-                    pixelH: jspsych.data.get().values()[3].screen_height_pixel,
-                    actualW: jspsych.data.get().values()[3].screen_width_physics,
-                    actualH: jspsych.data.get().values()[3].screen_height_physics
+                    pixelW: jspsych.data.get().values()[2].screen_width_pixel,
+                    pixelH: jspsych.data.get().values()[2].screen_height_pixel,
+                    actualW: jspsych.data.get().values()[2].screen_width_physics,
+                    actualH: jspsych.data.get().values()[2].screen_height_physics
                 }
             },
             trial_duration: 2500,
             response_start_time: 1100,
             choices: ["n", "m"],
-            on_finish: function(data) {
-                data.shape_association = word[img.indexOf(data.stim_img)]; // 图形所代表的意义
-                data.condition = word.indexOf(data.stim_word) == img.indexOf(data.stim_img) ? "match" : "mismatch"; // 匹配程度
+            data: {
+                shape_association: word[img.indexOf(jspsych.timelineVariable("img"))],
+                condition: word.indexOf(jspsych.timelineVariable("word")) == img.indexOf(jspsych.timelineVariable("img")) ? "match" : "mismatch"
+            },
+            on_finish: function (data) {
                 data.acc = (
-                    (answer[0] === data.response && data.condition === "match") || 
-                    (answer[1] === data.response && data.condition === "mismatch")
-                ) ? true : false;
-                data.save = true;
+                    (answer[0] === data.key_press && data.condition === "match") ||
+                    (answer[1] === data.key_press && data.condition === "mismatch")
+                ) ? 1 : 0;
             }
         }],
         timeline_variables: jspsych.randomization.factorial({
