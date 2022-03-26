@@ -1,4 +1,4 @@
-setwd("~/Desktop/SALT_Online/4_Analysis/4_1_pre_analysis")
+setwd("~/Desktop/SALT_Online/4_Analysis/4_2_Scripts")
 rm(list = ls())
 file <- list.files("../../3_RawData/3_2_pretreatment_data")
 
@@ -16,4 +16,4 @@ for (f in file) { # 对于文件进行循环读取
         raw_data <- tmp
     } # 这一步是保存tmp的内容
 }
-write.csv(raw_data, "../4_1_data/4_1_1_Preprocessing_data/origin.csv")
+write.csv(raw_data, "../4_1_data/origin.csv")
