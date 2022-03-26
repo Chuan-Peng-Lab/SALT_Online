@@ -1,0 +1,10 @@
+"","stim_img","stim_word","condition","shape_association","response","acc","rt"
+"1","img/Cir.png","好人","match","好人",NA,1,439
+"2","img/Squ.png","常人","mismatch","坏人",NA,1,506
+"3","img/Cir.png","坏人","mismatch","好人",NA,0,445
+"4","img/Squ.png","坏人","match","坏人",NA,0,330
+"5","img/Tri.png","坏人","mismatch","常人",NA,0,238
+"6","img/Tri.png","好人","mismatch","常人",NA,1,301
+"7","img/Tri.png","常人","match","常人",NA,0,265
+"8","img/Cir.png","常人","mismatch","好人",NA,1,281
+"9","img/Squ.png","好人","mismatch","坏人",NA,0,284
