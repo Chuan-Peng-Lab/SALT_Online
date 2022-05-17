@@ -3,3 +3,6 @@
 # Data
 *.Rhistory
 *.pptx
+
+# npm
+node_modules/
