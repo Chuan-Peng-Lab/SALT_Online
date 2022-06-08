@@ -3,6 +3,7 @@
     "@jspsych/plugin-html-button-response": "^1.1.0",
     "@jspsych/plugin-html-keyboard-response": "^1.1.0",
     "@jspsych/plugin-instructions": "^1.1.0",
+    "@jspsych/plugin-survey-html-form": "^1.0.1",
     "jquery": "^3.6.0",
     "jspsych": "^7.2.1",
     "jspsych_social_association_learning_task": "^0.0.2"
